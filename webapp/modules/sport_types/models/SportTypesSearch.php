@@ -18,7 +18,7 @@ class SportTypesSearch extends SportTypes
     public function rules()
     {
         return [
-            [['id', 'is_active', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'is_active'], 'integer'],
             [['title'], 'safe'],
         ];
     }
@@ -60,9 +60,7 @@ class SportTypesSearch extends SportTypes
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'is_active' => $this->is_active
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title]);

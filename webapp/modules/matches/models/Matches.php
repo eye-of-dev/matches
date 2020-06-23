@@ -3,7 +3,6 @@
 namespace app\modules\matches\models;
 
 use app\components\la\ActiveRecord;
-use app\modules\bets\models\Bets;
 use app\modules\sport_types\models\SportTypes;
 use app\modules\teams\models\Teams;
 use app\modules\tournaments\models\Tournaments;
@@ -20,9 +19,8 @@ use Yii;
  * @property integer $team_home_id
  * @property integer $team_guest_id
  * @property integer $start
- * @property integer $is_bet
- * @property integer $created_at
- * @property integer $updated_at
+ * @property json $bets
+ * @property json $gg_matches
  *
  * @property Matches $parentMatch
  * @property Matches[] $matches
@@ -48,13 +46,14 @@ class Matches extends ActiveRecord
     public function rules()
     {
         return [
-            [['sport_type_id', 'tournament_id', 'team_home_id', 'team_guest_id', 'start', 'is_bet'], 'integer'],
+            [['sport_type_id', 'tournament_id', 'team_home_id', 'team_guest_id', 'start'], 'integer'],
             [['parent_match_id', 'external_match_id'], 'string', 'max' => 32],
             [['external_match_id'], 'unique'],
             [['sport_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SportTypes::className(), 'targetAttribute' => ['sport_type_id' => 'id']],
             [['tournament_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tournaments::className(), 'targetAttribute' => ['tournament_id' => 'id']],
             [['team_guest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Teams::className(), 'targetAttribute' => ['team_guest_id' => 'id']],
             [['team_home_id'], 'exist', 'skipOnError' => true, 'targetClass' => Teams::className(), 'targetAttribute' => ['team_home_id' => 'id']],
+            [['bets', 'gg_matches'], 'safe'],
         ];
     }
 
@@ -72,10 +71,21 @@ class Matches extends ActiveRecord
             'team_home_id'      => 'Хозяева',
             'team_guest_id'     => 'Гости',
             'start'             => 'Дата начала матча',
-            'is_bet'            => 'Флаг наличия ставок',
-            'created_at'        => 'Дата создания',
-            'updated_at'        => 'Дата обновления',
+            'end'               => 'Дата окончания матча',
+            'bets'              => 'Ставки',
+            'gg_matches'        => 'ID матчей дублей',
         ];
+    }
+
+    public function getEnd()
+    {
+        $match_duration = 0;
+        if ($this->sportType)
+        {
+            $match_duration = $this->sportType->match_duration;
+        }
+
+        return $this->start + $match_duration;
     }
 
     /**
@@ -117,19 +127,6 @@ class Matches extends ActiveRecord
     {
         return $this->hasOne(Tournaments::className(), ['id' => 'tournament_id']);
     }
-    
-    /**
-     * @return \yii\data\ActiveDataProvider
-     */
-    public function betsDataProvider()
-    {
-        $query = Bets::find()->where(['match_id' => $this->id]);
-        return new \yii\data\ActiveDataProvider([
-            'query' => $query,
-            'sort'  => ['defaultOrder' => ['id' => SORT_ASC]],
-            'pagination' => false
-        ]);
-    }
 
     /**
      * @return \yii\data\ActiveDataProvider
@@ -138,10 +135,63 @@ class Matches extends ActiveRecord
     {
         $query = self::find()->where(['parent_match_id' => $this->external_match_id]);
         return new \yii\data\ActiveDataProvider([
-            'query' => $query,
-            'sort'  => ['defaultOrder' => ['id' => SORT_ASC]],
+            'query'      => $query,
+            'sort'       => ['defaultOrder' => ['id' => SORT_ASC]],
             'pagination' => false
         ]);
+    }
+
+    public function getGroupBets()
+    {
+        $bets_out = [];
+
+        $bets = $this->bets['bets'];
+
+        if ($bets)
+        {
+            foreach ($bets as $values)
+            {
+                foreach ($values as $bet)
+                {
+                    switch ($bet['T'])
+                    {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                            $bets_out[1][] = ['S' => $bet['S'], 'C' => $bet['C']];
+                            break;
+                        case 7:
+                        case 8:
+                            $keys = ['7' => 1, '8' => 2];
+                            $bets_out[7][$keys[$bet['T']]][] = ['S' => $bet['S'], 'C' => $bet['C']];
+                            break;
+                        case 9:
+                        case 10:
+                        case 4548:
+                            $keys = ['9' => 1, '10' => 2, '4548' => 3];
+                            $bets_out[8][$keys[$bet['T']]][] = ['S' => $bet['S'], 'C' => $bet['C']];
+                            break;
+                        default:
+                            $bets_out[9][$bet['S']] = ['S' => $bet['S'], 'C' => $bet['C']];
+                            break;
+                    }
+                }
+            }
+
+            ksort($bets_out);
+            ksort($bets_out[9]);
+        }
+
+        return json_encode([
+            'home'  => $this->teamHome->title,
+            'guest' => $this->teamGuest->title,
+            'start' => Yii::t('app', '{d, date, d MMMM YYYY в HH:m}', ['d' => $this->start], 'ru-RU'),
+            'title' => $this->teamHome->title . ' - ' . $this->teamGuest->title . '. Начало в ' . Yii::t('app', '{d, date, d MMMM YYYY в HH:m}', ['d' => $this->start], 'ru-RU'),
+            'bets'  => $bets_out,
+                ], JSON_UNESCAPED_UNICODE);
     }
 
 }

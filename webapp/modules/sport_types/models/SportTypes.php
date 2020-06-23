@@ -9,6 +9,7 @@ use app\components\la\ActiveRecord;
  *
  * @property integer $id
  * @property string $title
+ * @property integer $match_duration
  * @property integer $is_active
  * @property integer $created_at
  * @property integer $updated_at
@@ -31,7 +32,7 @@ class SportTypes extends ActiveRecord
     {
         return [
             [['title'], 'required'],
-            [['is_active'], 'integer'],
+            [['match_duration', 'is_active'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['title'], 'unique'],
         ];
@@ -43,11 +44,12 @@ class SportTypes extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'         => 'ID',
-            'title'      => 'Название',
-            'is_active'  => 'Статус',
-            'created_at' => 'Дата создания',
-            'updated_at' => 'Дата обновления',
+            'id'             => 'ID',
+            'title'          => 'Название',
+            'match_duration' => 'Длительность матча',
+            'is_active'      => 'Статус',
+            'created_at'     => 'Дата создания',
+            'updated_at'     => 'Дата обновления',
         ];
     }
 

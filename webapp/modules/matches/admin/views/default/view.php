@@ -39,37 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => ($model->teamGuest) ? $model->teamGuest->title : ''
                 ],
                 'start:datetime',
-                'is_bet',
-                'created_at:datetime'
+                'end:datetime',
             ],
         ]) ?>
-        
-        <h3 class="box-title">Ставки</h3>
-        <?= GridView::widget([
-            'dataProvider' => $model->betsDataProvider(),
-            'layout' => "{items}\n{pager}",
-            'options' => [
-                'class' => 'box box-primary'
-            ],
-            'tableOptions' => [
-                'class' => 'table table-bordered table-hover dataTable'
-            ],
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-                [
-                    'attribute' => 'bet',
-                    'format' => 'raw',
-                    'value' => function ($model) {
-                        $html = '';
-                        foreach ($model->bet as $key => $value){
-                            $html .= $key . ': ' . $value . ';';
-                        }
-                        return $html;
-                    }
-                ],
-                'created_at:datetime',
-            ],
-        ]); ?>
         
         <h3 class="box-title">Mатчи дублeй</h3>
         <?= GridView::widget([
@@ -95,11 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => 'teamGuest.title',
                 ],
                 'start:datetime',
-                'created_at:datetime',
-                [
-                    'class'     => \app\components\grid\LAToggleColumn::className(),
-                    'attribute' => 'is_bet',
-                ],
+                'end:datetime',
                 [
                     'class'    => yii\grid\ActionColumn::className(),
                     'template' => '{view} {delete}'

@@ -1,0 +1,6 @@
+*
+!.gitignore
+!admin.php
+!front.php
+!main.php
+!mode_test.php

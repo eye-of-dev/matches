@@ -12,14 +12,15 @@ use app\modules\teams\models\Teams;
  */
 class TeamsSearch extends Teams
 {
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'sport_type_id', 'is_active', 'created_at', 'updated_at'], 'integer'],
-            [['title'], 'safe'],
+            [['id', 'sport_type_id', 'is_active'], 'integer'],
+            [['external_match_id', 'title'], 'safe'],
         ];
     }
 
@@ -51,7 +52,8 @@ class TeamsSearch extends Teams
 
         $this->load($params);
 
-        if (!$this->validate()) {
+        if (!$this->validate())
+        {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
@@ -59,15 +61,15 @@ class TeamsSearch extends Teams
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'id'            => $this->id,
             'sport_type_id' => $this->sport_type_id,
-            'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'is_active'     => $this->is_active
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title]);
+        $query->andFilterWhere(
+                ['external_match_id', 'title', $this->external_match_id], ['like', 'title', $this->title]);
 
         return $dataProvider;
     }
+
 }
