@@ -12,6 +12,8 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
         <div class="box-body">
             <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+            
+            <?= $form->field($model, 'match_duration')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'is_active')->checkbox() ?>
         </div>

@@ -32,8 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'filter' => SportTypes::getDropdownList(),
             'value' => 'sportType.title',
         ],
+        'external_match_id',
         'title',
-        'created_at:datetime',
         [
             'class' => \app\components\grid\LAToggleColumn::className(),
             'attribute' => 'is_active',

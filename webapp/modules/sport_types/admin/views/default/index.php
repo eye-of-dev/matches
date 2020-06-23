@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
         'title',
-        'created_at:datetime',
+        'match_duration',
         [
             'class' => \app\components\grid\LAToggleColumn::className(),
             'attribute' => 'is_active',

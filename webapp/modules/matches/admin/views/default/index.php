@@ -22,6 +22,11 @@ $this->params['breadcrumbs'][] = $this->title;
     'tableOptions' => [
         'class' => 'table table-bordered table-hover dataTable'
     ],
+    'rowOptions' => function ($model, $key, $index, $grid) {
+        if(!$model->bets) {
+            return ['style' => 'background:#fcedd3;'];
+        }
+    },
     'columns'      => [
         ['class' => 'yii\grid\SerialColumn'],
         [
@@ -46,11 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'value' => 'teamGuest.title',
         ],
         'start:datetime',
-        'created_at:datetime',
-        [
-            'class'     => \app\components\grid\LAToggleColumn::className(),
-            'attribute' => 'is_bet',
-        ],
+        'end:datetime',
         [
             'class'    => yii\grid\ActionColumn::className(),
             'template' => '{view} {delete}'

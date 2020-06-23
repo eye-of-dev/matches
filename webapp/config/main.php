@@ -29,9 +29,6 @@ $result = [
         'timeZone'       => 'Europe/Moscow',
         'defaultRoute'   => 'mainpage/default/index',
         'modules'        => [
-            'bets'        => [
-                'class' => 'app\modules\bets\Module',
-            ],
             'config'      => [
                 'class' => 'app\modules\config\Module',
             ],
@@ -40,6 +37,9 @@ $result = [
             ],
             'matches'     => [
                 'class' => 'app\modules\matches\Module',
+            ],
+            'rest'        => [
+                'class' => 'app\modules\rest\Module',
             ],
             'sport_types' => [
                 'class' => 'app\modules\sport_types\Module',

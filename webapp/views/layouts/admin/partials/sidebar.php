@@ -8,11 +8,6 @@
                 'url'   => ['/matches/default/index'],
             ],
             [
-                'icon'  => 'dollar',
-                'label' => 'Ставки',
-                'url'   => ['/bets/default/index'],
-            ],
-            [
                 'icon'  => 'cog',
                 'label' => 'Настройки',
                 'url'   => ['/config/default/index'],

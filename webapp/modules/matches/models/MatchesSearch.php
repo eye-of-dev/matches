@@ -19,7 +19,7 @@ class MatchesSearch extends Matches
     public function rules()
     {
         return [
-            [['id', 'sport_type_id', 'tournament_id', 'parent_match_id', 'team_home_id', 'team_guest_id', 'start', 'is_bet'], 'integer'],
+            [['id', 'sport_type_id', 'tournament_id', 'parent_match_id', 'team_home_id', 'team_guest_id', 'start'], 'integer'],
             [['external_match_id'], 'safe'],
         ];
     }
@@ -67,10 +67,7 @@ class MatchesSearch extends Matches
             'parent_match_id' => $this->parent_match_id,
             'team_home_id'    => $this->team_home_id,
             'team_guest_id'   => $this->team_guest_id,
-            'start'           => $this->start,
-            'is_bet'          => $this->is_bet,
-            'created_at'      => $this->created_at,
-            'updated_at'      => $this->updated_at,
+            'start'           => $this->start
         ]);
 
         $query->andFilterWhere(['like', 'external_match_id', $this->external_match_id]);
